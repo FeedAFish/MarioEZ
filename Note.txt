@@ -1,0 +1,27 @@
+Client:
+1800x856
+
+Barrel:
+Barrel color:
+30e438
+81ea81
+Barrel width scale:
+100(84)/150
+
+Sky:
+05caed
+
+Grass:
+12b812
+
+Base:
+705
+
+Turtle:
+Skin:e99566
+G:47bc23
+B:8f2f16
+R:bb1717
+
+Note:
+Jump -> Fall
