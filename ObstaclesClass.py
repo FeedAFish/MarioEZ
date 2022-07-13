@@ -36,5 +36,5 @@ class Wall(Obstacles):
 
 
 class Land(Obstacles):
-    def __init__(self, pos=(0, 705), image=pathimage.land):
+    def __init__(self, pos=(0, 378), image=pathimage.land):
         super().__init__(image, pos)

@@ -4,20 +4,22 @@ import pathimage
 import ClassMain
 
 
-jumptime = 100
-falltime = 130
+jumptime = 60
+falltime = 75
 
 
 class Player(ClassMain.Collidable):
     def __init__(
         self,
         pos,
+        test = True,
         imager=pathimage.imager,
         imagel=pathimage.imagel,
         imagejr=pathimage.imagejr,
         imagejl=pathimage.imagejl,
     ):
         super().__init__()
+        self.test = test
 
         self.imager = imager
         self.imagel = imagel
@@ -89,6 +91,9 @@ class Player(ClassMain.Collidable):
 
     def To_Ground(self):
         self.onair = False
+        
+    def TO_Air(self):
+        self.onair=True
 
     def On_Collide(self, sprite):
         if isinstance(sprite, ClassMain.Spike):
@@ -107,6 +112,7 @@ class Player(ClassMain.Collidable):
                 self.fall = True
                 self.onair = True
                 self.counter = 0
+                
             else:
                 self.rect.bottom = sprite.rect.top
                 self.fall = True

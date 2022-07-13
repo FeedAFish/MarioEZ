@@ -5,22 +5,22 @@ import pygame
 linkp = os.path.dirname(os.path.abspath(__file__))
 
 barrel = pygame.image.load(os.path.join(linkp, "Image", "Barrel.png"))
-barrel = pygame.transform.scale(barrel, (100, 150))
+barrel = pygame.transform.scale(barrel, (80, 120))
 
 wall = pygame.image.load(os.path.join(linkp, "Image", "wall.png"))
 wall = pygame.transform.scale(wall, (40, 40))
 
 imager = pygame.image.load(os.path.join(linkp, "Image", "marior.png"))
-imager = pygame.transform.scale(imager, (40, 65))
+imager = pygame.transform.scale(imager, (30, 45))
 
 imagel = pygame.image.load(os.path.join(linkp, "Image", "mariol.png"))
-imagel = pygame.transform.scale(imagel, (40, 65))
+imagel = pygame.transform.scale(imagel, (30, 45))
 
 imagejr = pygame.image.load(os.path.join(linkp, "Image", "mariojr.png"))
-imagejr = pygame.transform.scale(imagejr, (40, 65))
+imagejr = pygame.transform.scale(imagejr, (30, 45))
 
 imagejl = pygame.image.load(os.path.join(linkp, "Image", "mariojl.png"))
-imagejl = pygame.transform.scale(imagejl, (40, 65))
+imagejl = pygame.transform.scale(imagejl, (30, 45))
 
 land = pygame.image.load(os.path.join(linkp, "Image", "scr1.png"))
 land = pygame.transform.scale(land, (1800, 856))
