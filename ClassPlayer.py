@@ -1,5 +1,7 @@
 import pygame
 from pygame.locals import *
+from MonsterClass import Monsters
+from ObstaclesClass import Obstacles
 import pathimage
 import ClassMain
 
@@ -12,7 +14,7 @@ class Player(ClassMain.Collidable):
     def __init__(
         self,
         pos,
-        test = True,
+        test=True,
         imager=pathimage.imager,
         imagel=pathimage.imagel,
         imagejr=pathimage.imagejr,
@@ -91,33 +93,45 @@ class Player(ClassMain.Collidable):
 
     def To_Ground(self):
         self.onair = False
-        
+
     def TO_Air(self):
-        self.onair=True
+        self.onair = True
 
     def On_Collide(self, sprite):
         if isinstance(sprite, ClassMain.Spike):
             self.Die()
         a = pygame.Rect(
-            (self.rect[0], self.rect[1] - self.dy), (self.rect[2], self.rect[3])
+            (self.rect[0], self.rect[1] -
+             self.dy), (self.rect[2], self.rect[3])
         )
-        if a.colliderect(sprite):
-            if self.dx < 0:
-                self.rect.left = sprite.rect.right
+        if isinstance(sprite, Obstacles):
+            if a.colliderect(sprite):
+                if self.dx < 0:
+                    self.rect.left = sprite.rect.right
+                else:
+                    self.rect.right = sprite.rect.left
             else:
-                self.rect.right = sprite.rect.left
+                if self.dy < 0:
+                    self.rect.top = sprite.rect.bottom
+                    self.fall = True
+                    self.onair = True
+                    self.counter = 0
+                else:
+                    self.rect.bottom = sprite.rect.top
+                    self.fall = True
+                    self.onair = False
+                    self.counter = 0
         else:
-            if self.dy < 0:
-                self.rect.top = sprite.rect.bottom
-                self.fall = True
+            if a.colliderect(sprite) or self.dy < 0:
+                self.Die()
+            else:
+                self.fall = False
                 self.onair = True
                 self.counter = 0
-                
-            else:
-                self.rect.bottom = sprite.rect.top
-                self.fall = True
-                self.onair = False
-                self.counter = 0
+                sprite.SelfKill()
 
     def ToggleInvi(self):
         self.invisible = True
+
+    def Die(self):
+        print("RIP")

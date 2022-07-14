@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
 from ClassPlayer import Player
-from ObstaclesClass import Land,Pipe,Wall
+from ObstaclesClass import Land, Pipe, Wall
+from MonsterClass import Mush
 import os
 
 linkp = os.path.dirname(os.path.abspath(__file__))
@@ -18,12 +19,13 @@ buttonpr = pygame.transform.scale(buttonpr, (120, 60))
 button = pygame.image.load(os.path.join(linkp, "Image", "buttonpressed.png"))
 button = pygame.transform.scale(button, (120, 60))
 
+
 class Mario(object):
     def __init__(self, displayw, displayh):
         self.running = True
         self.height = displayh
         self.width = displayw
-        
+
         # self.timer = 0
         self.iter = 0
         self.move = False
@@ -32,14 +34,14 @@ class Mario(object):
         self.position = 500
         self.scroll = 0
         self.obstacles = []
-        # self.monsters = []
+        self.monsters = []
         # self.buff = []
         self.land = Land()
-        # self.turtlem = Mush((800, 671))
-        # self.monsters.append(self.turtlem)
+        self.turtlem = Mush(pos=(700, 326))
+        self.monsters.append(self.turtlem)
         # self.Addbuff(redbuffpos=(550, 346))
         self.AddObstacle(pipepos=(900, 256))
-        self.AddObstacle(wallpos=(550, 226), wallnumber=4)
+        self.AddObstacle(wallpos=(550, 206), wallnumber=4)
         self.MainMenu()
 
     def MainMenu(self):
@@ -51,9 +53,11 @@ class Mario(object):
                 displayw / 2 - 60 <= mouse[0] <= displayw / 2 + 60
                 and displayh / 2 - 30 <= mouse[1] <= displayh / 2 + 30
             ):
-                window.blit(button, (self.width / 2 - 60, self.height / 2 - 30))
+                window.blit(button, (self.width / 2 -
+                            60, self.height / 2 - 30))
             else:
-                window.blit(buttonpr, (self.width / 2 - 60, self.height / 2 - 30))
+                window.blit(buttonpr, (self.width / 2 -
+                            60, self.height / 2 - 30))
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -74,9 +78,9 @@ class Mario(object):
         if self.move:
             self.scroll += 1
             self.position += 1
-            for i in self.obstacles: #+ self.monsters + self.buff:
+            for i in self.obstacles + self.monsters:  # + self.monsters + self.buff:
                 i.Move(-1, 0)
-    
+
     def AddObstacle(self, **kwargs):
         if kwargs.get("pipepos"):
             a = Pipe(kwargs.get("pipepos"))
@@ -87,16 +91,23 @@ class Mario(object):
 
     def Main(self):
         while self.running:
+
+            # Show objects
+
             self.ScrollScreen()
             self.player.Show(window)
-            for i in self.obstacles:
+            for i in self.obstacles + self.monsters:
                 i.Show(window)
-        
+
+            # Check events -- Right now no uses
+
             pressed = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
-            
+
+            # Check player movements -- UDLR
+
             if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
                 self.player.ChangeX(-1)
                 if self.player.right:
@@ -107,9 +118,15 @@ class Mario(object):
                     self.player.ChangePos()
             else:
                 self.player.ChangeX(0)
+
+            # Jump key check
+
             if pressed[pygame.K_UP]:
                 self.player.Up_Pressed()
-            if self.player.rect[0] > 700:
+
+            # Scroll screen check
+
+            if self.player.rect[0] > 400:
                 if pressed[pygame.K_RIGHT]:
                     self.player.ChangeX(0)
                     self.move = True
@@ -118,19 +135,36 @@ class Mario(object):
             else:
                 self.move = False
 
+            # Move player
+
             self.player.Move()
-            check_ground = False
+
+            # Collision check
+
+            check_ground = False  # Collision bottom -- onair check
             if self.player.rect.colliderect(self.land):
                 self.player.On_Collide(self.land)
-                check_ground=True
+                check_ground = True
             for i in self.obstacles:
                 if self.player.rect.colliderect(i):
                     self.player.On_Collide(i)
-                    check_ground=True
+                    check_ground = True
             if not check_ground:
                 self.player.TO_Air()
-            
-            
+
+            # Monster's collision check -- alive monster check only
+
+            for i in self.monsters:
+                if self.player.rect.colliderect(i) and i.monalive:
+                    self.player.On_Collide(i)
+
+            # Monster's trajectory movement
+
+            for i in self.monsters:
+                if i.monalive and not(i.counter):
+                    print(1)
+                    i.Traject()
             pygame.display.flip()
-    
+
+
 Mario(displayw, displayh)

@@ -29,7 +29,7 @@ mushm = pygame.image.load(os.path.join(linkp, "Image", "mushmonsco.png"))
 mushm = pygame.transform.scale(mushm, (40, 35))
 
 mushd = pygame.image.load(os.path.join(linkp, "Image", "dmushmons.png"))
-mushd = pygame.transform.scale(mushd, (40, 35))
+mushd = pygame.transform.scale(mushd, (40, 15))
 
 redbuff = pygame.image.load(os.path.join(linkp, "Image", "redbuff.png"))
 redbuff = pygame.transform.scale(redbuff, (40, 40))
