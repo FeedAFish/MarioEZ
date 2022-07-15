@@ -1,5 +1,6 @@
 from importlib.resources import path
 import os
+import turtle
 import pygame
 
 linkp = os.path.dirname(os.path.abspath(__file__))
@@ -39,3 +40,11 @@ greenbuff = pygame.transform.scale(greenbuff, (40, 40))
 
 bonusbox = pygame.image.load(os.path.join(linkp, "Image", "bonusbox.png"))
 bonusbox = pygame.transform.scale(bonusbox, (40, 40))
+
+landturtlered = pygame.image.load(
+    os.path.join(linkp, "Image", "turtlered.png"))
+landturtlered = pygame.transform.scale(landturtlered, (40, 50))
+
+turtleshell = pygame.image.load(
+    os.path.join(linkp, "Image", "shellturtle.png"))
+turtleshell = pygame.transform.scale(turtleshell, (40, 30))

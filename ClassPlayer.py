@@ -128,7 +128,7 @@ class Player(ClassMain.Collidable):
                 self.fall = False
                 self.onair = True
                 self.counter = 0
-                sprite.SelfKill()
+                sprite.Pl_Collide(self)
 
     def ToggleInvi(self):
         self.invisible = True

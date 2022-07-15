@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from ClassPlayer import Player
 from ObstaclesClass import Land, Pipe, Wall
-from MonsterClass import Mush
+from MonsterClass import Mush, TurtleLand, TurtleMons
 import os
 
 linkp = os.path.dirname(os.path.abspath(__file__))
@@ -37,11 +37,17 @@ class Mario(object):
         self.monsters = []
         # self.buff = []
         self.land = Land()
-        self.turtlem = Mush(pos=(700, 326))
+        self.turtlem = TurtleLand(pos=(440, 226))
+        self.monsters.append(self.turtlem)
+        self.turtlem = TurtleLand(pos=(1000, 166))
+        self.monsters.append(self.turtlem)
+        self.turtlem = TurtleLand(pos=(800, 166))
         self.monsters.append(self.turtlem)
         # self.Addbuff(redbuffpos=(550, 346))
         self.AddObstacle(pipepos=(900, 256))
-        self.AddObstacle(wallpos=(550, 206), wallnumber=4)
+        self.AddObstacle(pipepos=(1300, 256))
+        self.AddObstacle(wallpos=(380, 306), wallnumber=4)
+        self.AddObstacle(wallpos=(950, 206), wallnumber=4)
         self.MainMenu()
 
     def MainMenu(self):
@@ -95,45 +101,17 @@ class Mario(object):
             # Show objects
 
             self.ScrollScreen()
-            self.player.Show(window)
-            for i in self.obstacles + self.monsters:
-                i.Show(window)
+            self.ShowObj()
 
             # Check events -- Right now no uses
 
-            pressed = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
 
             # Check player movements -- UDLR
 
-            if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
-                self.player.ChangeX(-1)
-                if self.player.right:
-                    self.player.ChangePos()
-            elif pressed[pygame.K_RIGHT] and not pressed[pygame.K_LEFT]:
-                self.player.ChangeX(1)
-                if not self.player.right:
-                    self.player.ChangePos()
-            else:
-                self.player.ChangeX(0)
-
-            # Jump key check
-
-            if pressed[pygame.K_UP]:
-                self.player.Up_Pressed()
-
-            # Scroll screen check
-
-            if self.player.rect[0] > 400:
-                if pressed[pygame.K_RIGHT]:
-                    self.player.ChangeX(0)
-                    self.move = True
-                else:
-                    self.move = False
-            else:
-                self.move = False
+            self.Check_UDLR()
 
             # Move player
 
@@ -141,30 +119,80 @@ class Mario(object):
 
             # Collision check
 
-            check_ground = False  # Collision bottom -- onair check
-            if self.player.rect.colliderect(self.land):
-                self.player.On_Collide(self.land)
-                check_ground = True
-            for i in self.obstacles:
-                if self.player.rect.colliderect(i):
-                    self.player.On_Collide(i)
-                    check_ground = True
-            if not check_ground:
-                self.player.TO_Air()
+            self.Collision_Check()
 
             # Monster's collision check -- alive monster check only
 
-            for i in self.monsters:
-                if self.player.rect.colliderect(i) and i.monalive:
-                    self.player.On_Collide(i)
+            self.MonsCollisionCheck()
 
             # Monster's trajectory movement
+            # Monster's collision Check
 
-            for i in self.monsters:
-                if i.monalive and not(i.counter):
-                    print(1)
-                    i.Traject()
+            self.MonsTrajectory()
+
             pygame.display.flip()
+
+    def ShowObj(self):
+        self.player.Show(window)
+        for i in self.obstacles + self.monsters:
+            i.Show(window)
+
+    def Check_UDLR(self):
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
+            self.player.ChangeX(-1)
+            if self.player.right:
+                self.player.ChangePos()
+        elif pressed[pygame.K_RIGHT] and not pressed[pygame.K_LEFT]:
+            self.player.ChangeX(1)
+            if not self.player.right:
+                self.player.ChangePos()
+        else:
+            self.player.ChangeX(0)
+        if pressed[pygame.K_UP]:
+            self.player.Up_Pressed()
+        # Check Screen scroll
+        if self.player.rect[0] > 400:
+            if pressed[pygame.K_RIGHT]:
+                self.player.ChangeX(0)
+                self.move = True
+            else:
+                self.move = False
+        else:
+            self.move = False
+
+    def Collision_Check(self):
+        check_ground = False  # Collision bottom -- onair check
+        if self.player.rect.colliderect(self.land):
+            self.player.On_Collide(self.land)
+            check_ground = True
+        for i in self.obstacles:
+            if self.player.rect.colliderect(i):
+                self.player.On_Collide(i)
+                check_ground = True
+        if not check_ground:
+            self.player.TO_Air()
+
+    def MonsCollisionCheck(self):
+        for i in self.monsters:
+            if self.player.rect.colliderect(i) and i.monalive:
+                self.player.On_Collide(i)
+
+    def MonsTrajectory(self):
+        for i in self.monsters:
+            if i.monalive and not(i.counter):
+                i.Traject()
+            if i.rect.colliderect(self.land):
+                i.On_collide(self.land)
+            for j in self.obstacles:
+                if i.monalive and i.rect.colliderect(j):
+                    i.On_collide(j)
+            if isinstance(i, TurtleMons):
+                if not i.mode:
+                    for j in set(self.monsters) - set([i]):
+                        if j.monalive and i.rect.colliderect(j):
+                            if j.mode:
+                                j.MonaliveFalse()
 
 
 Mario(displayw, displayh)
