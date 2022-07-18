@@ -123,7 +123,7 @@ class TurtleLand(TurtleMons):
 
 
 class TurtleFly(TurtleMons):
-    def __init__(self, pos, image=pathimage.landturtlered, imaged=pathimage.turtleshell):
+    def __init__(self, pos, image=pathimage.flyturtlered, imaged=pathimage.turtleshell):
         super().__init__(pos, image, imaged)
         self.dx = -1
         self.dy = -3

@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from BonusClass import Coin
 from ClassPlayer import Player
 from ObstaclesClass import Coinbox, Land, Pipe, Wall
 from MonsterClass import Mush, TurtleFly, TurtleLand, TurtleMons
@@ -49,6 +50,7 @@ class Mario(object):
         self.AddObstacle(wallpos=(380, 306), wallnumber=4)
         self.AddObstacle(wallpos=(950, 206), wallnumber=4)
         self.AddObstacle(coinpos=(280, 206))
+        self.bonus = []
         self.MainMenu()
 
     def MainMenu(self):
@@ -85,7 +87,8 @@ class Mario(object):
         if self.move:
             self.scroll += 1
             self.position += 1
-            for i in self.obstacles + self.monsters:  # + self.monsters + self.buff:
+            # + self.monsters + self.buff:
+            for i in self.obstacles + self.monsters + self.bonus:
                 i.Move(-1, 0)
 
     def AddObstacle(self, **kwargs):
@@ -134,11 +137,15 @@ class Mario(object):
 
             self.MonsTrajectory()
 
+            self.MonsCollisionCheck
+
+            self.BonusTraject()
+
             pygame.display.flip()
 
     def ShowObj(self):
         self.player.Show(window)
-        for i in self.obstacles + self.monsters:
+        for i in self.obstacles + self.monsters+self.bonus:
             i.Show(window)
 
     def Check_UDLR(self):
@@ -173,11 +180,13 @@ class Mario(object):
         for i in self.obstacles:
             if self.player.rect.colliderect(i):
                 self.player.On_Collide(i)
-                if isinstance(i, Coinbox):
-                    i.On_collide(self.player)
+
                 check_ground = True
             if isinstance(i, Coinbox):
                 i.BoxJump()
+                if not i.coin and i.toggle:
+                    self.AddBonus(coinpos=i.rect.topleft)
+                    i.ToggleFalse()
         if not check_ground:
             self.player.TO_Air()
 
@@ -201,6 +210,15 @@ class Mario(object):
                         if j.monalive and i.rect.colliderect(j):
                             if j.mode:
                                 j.MonaliveFalse()
+
+    def BonusTraject(self):
+        for i in self.bonus:
+            i.Traject()
+
+    def AddBonus(self, **kwargs):
+        if kwargs.get("coinpos"):
+            a = Coin(kwargs.get("coinpos"))
+            self.bonus.append(a)
 
 
 Mario(displayw, displayh)

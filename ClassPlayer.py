@@ -1,4 +1,5 @@
 import pygame
+import ObstaclesClass
 from pygame.locals import *
 from MonsterClass import Monsters
 from ObstaclesClass import Obstacles
@@ -116,6 +117,11 @@ class Player(ClassMain.Collidable):
                     self.fall = True
                     self.onair = True
                     self.counter = 0
+                    # Collision coin box
+                    if isinstance(sprite, ObstaclesClass.Coinbox):
+                        sprite.On_collide(self)
+                        if sprite.coin:
+                            sprite.Coinleave()
                 else:
                     self.rect.bottom = sprite.rect.top
                     self.fall = True
@@ -135,3 +141,4 @@ class Player(ClassMain.Collidable):
 
     def Die(self):
         print("RIP")
+        self.rect.topleft = (100, 100)

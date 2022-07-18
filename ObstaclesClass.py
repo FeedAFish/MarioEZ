@@ -1,3 +1,4 @@
+from re import A
 import pygame
 from pygame.locals import *
 import pathimage
@@ -45,6 +46,8 @@ class Coinbox(Wall):
     def __init__(self, pos, number, image=pathimage.coinbox):
         super().__init__(pos, number, image)
         self.impactcount = 0
+        self.coin = 1
+        self.toggle = 1
 
     def On_collide(self, sprite):
         if not self.impactcount:
@@ -57,3 +60,9 @@ class Coinbox(Wall):
                 self.Move(0, 1)
             else:
                 self.Move(0, -1)
+
+    def Coinleave(self):
+        self.coin = 0
+
+    def ToggleFalse(self):
+        self.toggle = False
