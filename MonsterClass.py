@@ -120,3 +120,23 @@ class TurtleLand(TurtleMons):
         else:
             self.trajectcount = 0
             self.dx = - self.dx
+
+
+class TurtleFly(TurtleMons):
+    def __init__(self, pos, image=pathimage.landturtlered, imaged=pathimage.turtleshell):
+        super().__init__(pos, image, imaged)
+        self.dx = -1
+        self.dy = -3
+
+    def RunTraject(self):
+        if self.trajectcount < 1200:
+            self.trajectcount += 1
+            if self.trajectcount % 100 == 0:
+                self.dy = -self.dy
+            if self.trajectcount == 600:
+                self.dx = -self.dx
+            if self.trajectcount % self.speed == 0:
+                self.Move(self.dx, self.dy)
+        else:
+            self.trajectcount = 0
+            self.dx = - self.dx

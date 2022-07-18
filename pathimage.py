@@ -48,3 +48,11 @@ landturtlered = pygame.transform.scale(landturtlered, (40, 50))
 turtleshell = pygame.image.load(
     os.path.join(linkp, "Image", "shellturtle.png"))
 turtleshell = pygame.transform.scale(turtleshell, (40, 30))
+
+flyturtlered = pygame.image.load(
+    os.path.join(linkp, "Image", "turtleflyred.png"))
+flyturtlered = pygame.transform.scale(flyturtlered, (40, 50))
+
+coinbox = pygame.image.load(
+    os.path.join(linkp, "Image", "coinbox.png"))
+coinbox = pygame.transform.scale(coinbox, (40, 40))

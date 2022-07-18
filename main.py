@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 from ClassPlayer import Player
-from ObstaclesClass import Land, Pipe, Wall
-from MonsterClass import Mush, TurtleLand, TurtleMons
+from ObstaclesClass import Coinbox, Land, Pipe, Wall
+from MonsterClass import Mush, TurtleFly, TurtleLand, TurtleMons
 import os
 
 linkp = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ class Mario(object):
         self.monsters = []
         # self.buff = []
         self.land = Land()
-        self.turtlem = TurtleLand(pos=(440, 226))
+        self.turtlem = TurtleFly(pos=(340, 266))
         self.monsters.append(self.turtlem)
         self.turtlem = TurtleLand(pos=(1000, 166))
         self.monsters.append(self.turtlem)
@@ -48,6 +48,7 @@ class Mario(object):
         self.AddObstacle(pipepos=(1300, 256))
         self.AddObstacle(wallpos=(380, 306), wallnumber=4)
         self.AddObstacle(wallpos=(950, 206), wallnumber=4)
+        self.AddObstacle(coinpos=(280, 206))
         self.MainMenu()
 
     def MainMenu(self):
@@ -93,6 +94,9 @@ class Mario(object):
             self.obstacles.append(a)
         if kwargs.get("wallpos"):
             a = Wall(kwargs.get("wallpos"), kwargs.get("wallnumber"))
+            self.obstacles.append(a)
+        if kwargs.get("coinpos"):
+            a = Coinbox(kwargs.get("coinpos"), 1)
             self.obstacles.append(a)
 
     def Main(self):
@@ -169,7 +173,11 @@ class Mario(object):
         for i in self.obstacles:
             if self.player.rect.colliderect(i):
                 self.player.On_Collide(i)
+                if isinstance(i, Coinbox):
+                    i.On_collide(self.player)
                 check_ground = True
+            if isinstance(i, Coinbox):
+                i.BoxJump()
         if not check_ground:
             self.player.TO_Air()
 
