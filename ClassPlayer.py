@@ -40,6 +40,7 @@ class Player(ClassMain.Collidable):
         self.counter = 0
         # Level
         self.level = 0
+        self.life = 2
         # Invisible
         self.invisible = False
         self.invisibleTimer = 0
@@ -140,5 +141,9 @@ class Player(ClassMain.Collidable):
         self.invisible = True
 
     def Die(self):
-        print("RIP")
-        self.rect.topleft = (100, 100)
+        if self.life:
+            print("RIP")
+            self.rect.topleft = (100, 100)
+            self.life -= 1
+        else:
+            pygame.quit()

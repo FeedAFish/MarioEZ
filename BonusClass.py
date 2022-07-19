@@ -1,3 +1,4 @@
+from tkinter import CENTER
 import pygame
 import pathimage
 from ClassMain import Collidable
@@ -7,7 +8,7 @@ class Bonus(Collidable):
     def __init__(self, pos, image):
         super().__init__()
         self.image = image
-        self.rect = self.image.get_rect(topleft=pos)
+        self.rect = self.image.get_rect(center=pos)
         # self.counter = 1
 
     def Show(self, window):
@@ -15,7 +16,7 @@ class Bonus(Collidable):
 
 
 class Coin(Bonus):
-    def __init__(self, pos, image=pathimage.redbuff):
+    def __init__(self, pos, image=pathimage.coin):
         super().__init__(pos, image)
         self.counter = 1
 

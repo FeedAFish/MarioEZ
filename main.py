@@ -1,4 +1,5 @@
 import pygame
+import pathimage
 from pygame.locals import *
 from BonusClass import Coin
 from ClassPlayer import Player
@@ -57,6 +58,8 @@ class Mario(object):
         while True:
             window.fill((0, 0, 0))
             window.blit(bg_img, (0, 0))
+            # for i in range(10):
+            #     window.blit(pathimage.Number(i), (10 + i * 60, 10))
             mouse = pygame.mouse.get_pos()
             if (
                 displayw / 2 - 60 <= mouse[0] <= displayw / 2 + 60
@@ -109,7 +112,7 @@ class Mario(object):
 
             self.ScrollScreen()
             self.ShowObj()
-
+            self.ShowLife()
             # Check events -- Right now no uses
 
             for event in pygame.event.get():
@@ -185,7 +188,7 @@ class Mario(object):
             if isinstance(i, Coinbox):
                 i.BoxJump()
                 if not i.coin and i.toggle:
-                    self.AddBonus(coinpos=i.rect.topleft)
+                    self.AddBonus(coinpos=i.rect.center)
                     i.ToggleFalse()
         if not check_ground:
             self.player.TO_Air()
@@ -208,7 +211,7 @@ class Mario(object):
                 if not i.mode:
                     for j in set(self.monsters) - set([i]):
                         if j.monalive and i.rect.colliderect(j):
-                            if j.mode:
+                            if j.mode and i.dx:
                                 j.MonaliveFalse()
 
     def BonusTraject(self):
@@ -220,5 +223,9 @@ class Mario(object):
             a = Coin(kwargs.get("coinpos"))
             self.bonus.append(a)
 
+    def ShowLife(self):
+        window.blit(pathimage.imagejl, (10, 10))
+        window.blit(pathimage.Number("x"), (45, 25))
+        window.blit(pathimage.Number(self.player.life), (70, 20))
 
 Mario(displayw, displayh)

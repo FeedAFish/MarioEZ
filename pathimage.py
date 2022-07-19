@@ -56,3 +56,17 @@ flyturtlered = pygame.transform.scale(flyturtlered, (40, 50))
 coinbox = pygame.image.load(
     os.path.join(linkp, "Image", "coinbox.png"))
 coinbox = pygame.transform.scale(coinbox, (40, 40))
+
+coin = pygame.image.load(
+    os.path.join(linkp, "Image", "coin.png"))
+coin = pygame.transform.scale(coin, (30, 40))
+
+
+def Number(i):
+    if i == "x":
+        return pygame.transform.scale(pygame.image.load(os.path.join(linkp, "Image", "Number", str(i)+".png")), (20, 20))
+    return pygame.transform.scale(pygame.image.load(os.path.join(linkp, "Image", "Number", str(i)+".png")), (20, 30))
+
+
+def LoadLandTurtle(color):
+    return pygame.transform.scale(pygame.image.load(os.path.join(linkp, "Image", "turtle" + str(color) + ".png")), (40, 50))
