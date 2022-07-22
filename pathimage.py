@@ -11,18 +11,6 @@ barrel = pygame.transform.scale(barrel, (80, 120))
 wall = pygame.image.load(os.path.join(linkp, "Image", "wall.png"))
 wall = pygame.transform.scale(wall, (40, 40))
 
-imager = pygame.image.load(os.path.join(linkp, "Image", "marior.png"))
-imager = pygame.transform.scale(imager, (30, 45))
-
-imagel = pygame.image.load(os.path.join(linkp, "Image", "mariol.png"))
-imagel = pygame.transform.scale(imagel, (30, 45))
-
-imagejr = pygame.image.load(os.path.join(linkp, "Image", "mariojr.png"))
-imagejr = pygame.transform.scale(imagejr, (30, 45))
-
-imagejl = pygame.image.load(os.path.join(linkp, "Image", "mariojl.png"))
-imagejl = pygame.transform.scale(imagejl, (30, 45))
-
 land = pygame.image.load(os.path.join(linkp, "Image", "scr1.png"))
 land = pygame.transform.scale(land, (1800, 856))
 
@@ -68,5 +56,14 @@ def Number(i):
     return pygame.transform.scale(pygame.image.load(os.path.join(linkp, "Image", "Number", str(i)+".png")), (20, 30))
 
 
-def LoadLandTurtle(color):
-    return pygame.transform.scale(pygame.image.load(os.path.join(linkp, "Image", "turtle" + str(color) + ".png")), (40, 50))
+def PlayerImage(level):
+    a = (40, 60) if level else (30, 45)
+    return pygame.transform.scale(
+        pygame.image.load(os.path.join(linkp, "Image", "marior.png")),
+        a), pygame.transform.scale(
+        pygame.image.load(os.path.join(linkp, "Image", "mariol.png")),
+        a), pygame.transform.scale(
+        pygame.image.load(os.path.join(linkp, "Image", "mariojr.png")),
+        a), pygame.transform.scale(
+        pygame.image.load(os.path.join(linkp, "Image", "mariojl.png")),
+        a)

@@ -37,7 +37,6 @@ class Mario(object):
         self.scroll = 0
         self.obstacles = []
         self.monsters = []
-        # self.buff = []
         self.land = Land()
         self.turtlem = TurtleFly(pos=(340, 266))
         self.monsters.append(self.turtlem)
@@ -45,10 +44,9 @@ class Mario(object):
         self.monsters.append(self.turtlem)
         self.turtlem = TurtleLand(pos=(800, 166))
         self.monsters.append(self.turtlem)
-        # self.Addbuff(redbuffpos=(550, 346))
         self.AddObstacle(pipepos=(900, 256))
         self.AddObstacle(pipepos=(1300, 256))
-        self.AddObstacle(wallpos=(380, 306), wallnumber=4)
+        self.AddObstacle(wallpos=(380, 206), wallnumber=4)
         self.AddObstacle(wallpos=(950, 206), wallnumber=4)
         self.AddObstacle(coinpos=(280, 206))
         self.bonus = []
@@ -140,8 +138,6 @@ class Mario(object):
 
             self.MonsTrajectory()
 
-            self.MonsCollisionCheck
-
             self.BonusTraject()
 
             pygame.display.flip()
@@ -224,8 +220,9 @@ class Mario(object):
             self.bonus.append(a)
 
     def ShowLife(self):
-        window.blit(pathimage.imagejl, (10, 10))
+        window.blit(pathimage.PlayerImage(0)[2], (10, 10))
         window.blit(pathimage.Number("x"), (45, 25))
         window.blit(pathimage.Number(self.player.life), (70, 20))
+
 
 Mario(displayw, displayh)

@@ -28,6 +28,7 @@ class Wall(Obstacles):
         super().__init__(image, pos)
         self.number = number
         self.rect.width = self.rect.width * self.number
+        self.impactcount = 0
 
     def Show(self, window):
         for i in range(self.number):
@@ -35,6 +36,19 @@ class Wall(Obstacles):
                 self.image, (self.rect.left + i *
                              self.rect.height, self.rect.top)
             )
+
+    def On_collide(self, sprite):
+        if not self.impactcount:
+            self.impactcount = 14
+
+    def BoxJump(self):
+        if self.impactcount:
+            self.impactcount -= 1
+            if self.impactcount < 8:
+                self.Move(0, 1)
+            else:
+                self.Move(0, -1)
+            print(1)
 
 
 class Land(Obstacles):

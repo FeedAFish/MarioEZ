@@ -15,19 +15,11 @@ class Player(ClassMain.Collidable):
     def __init__(
         self,
         pos,
-        test=True,
-        imager=pathimage.imager,
-        imagel=pathimage.imagel,
-        imagejr=pathimage.imagejr,
-        imagejl=pathimage.imagejl,
     ):
         super().__init__()
-        self.test = test
-
-        self.imager = imager
-        self.imagel = imagel
-        self.imagejl = imagejl
-        self.imagejr = imagejr
+        self.level = 1
+        self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
+            self.level)
 
         self.rect = self.imager.get_rect(topleft=pos)
 
@@ -39,7 +31,7 @@ class Player(ClassMain.Collidable):
         # Counter Jump On Air
         self.counter = 0
         # Level
-        self.level = 0
+
         self.life = 2
         # Invisible
         self.invisible = False
@@ -92,6 +84,10 @@ class Player(ClassMain.Collidable):
         self.Fall_Check()
         self.rect.x += self.dx
         self.rect.y += self.dy
+        if self.invisibleTimer:
+            self.invisibleTimer -= 1
+        else:
+            self.invisible = False
 
     def To_Ground(self):
         self.onair = False
@@ -139,11 +135,21 @@ class Player(ClassMain.Collidable):
 
     def ToggleInvi(self):
         self.invisible = True
+        self.invisibleTimer = 100
 
     def Die(self):
-        if self.life:
-            print("RIP")
-            self.rect.topleft = (100, 100)
-            self.life -= 1
+        if self.level and not self.invisible:
+            self.level -= 1
+            self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
+                self.level)
+            self.rect = self.imagel.get_rect(bottomleft=self.rect.bottomleft)
+            self.ToggleInvi()
+        elif not self.invisible:
+            if self.life:
+                print("RIP")
+                self.rect.topleft = (100, 100)
+                self.life -= 1
+            else:
+                pygame.quit()
         else:
-            pygame.quit()
+            pass
