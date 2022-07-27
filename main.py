@@ -21,6 +21,7 @@ buttonpr = pygame.transform.scale(buttonpr, (120, 60))
 button = pygame.image.load(os.path.join(linkp, "Image", "buttonpressed.png"))
 button = pygame.transform.scale(button, (120, 60))
 
+clock = pygame.time.Clock()
 
 class Mario(object):
     def __init__(self, displayw, displayh):
@@ -105,6 +106,7 @@ class Mario(object):
 
     def Main(self):
         while self.running:
+            clock.tick(120)
 
             # Show objects
 
