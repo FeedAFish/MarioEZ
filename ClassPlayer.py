@@ -153,3 +153,9 @@ class Player(ClassMain.Collidable):
                 pygame.quit()
         else:
             pass
+
+    def LevelChange(self, x):
+        self.level = x
+        self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
+            self.level)
+        self.rect = self.imagel.get_rect(bottomleft=self.rect.bottomleft)

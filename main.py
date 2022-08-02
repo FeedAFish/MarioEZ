@@ -1,7 +1,7 @@
 import pygame
 import pathimage
 from pygame.locals import *
-from BonusClass import Coin
+from BonusClass import Coin, Buff
 from ClassPlayer import Player
 from ObstaclesClass import Coinbox, Land, Pipe, Wall
 from MonsterClass import Mush, TurtleFly, TurtleLand, TurtleMons
@@ -22,6 +22,7 @@ button = pygame.image.load(os.path.join(linkp, "Image", "buttonpressed.png"))
 button = pygame.transform.scale(button, (120, 60))
 
 clock = pygame.time.Clock()
+
 
 class Mario(object):
     def __init__(self, displayw, displayh):
@@ -200,31 +201,50 @@ class Mario(object):
         for i in self.monsters:
             if i.monalive and not(i.counter):
                 i.Traject()
-            if i.rect.colliderect(self.land):
-                i.On_collide(self.land)
-            for j in self.obstacles:
-                if i.monalive and i.rect.colliderect(j):
-                    i.On_collide(j)
-            if isinstance(i, TurtleMons):
-                if not i.mode:
-                    for j in set(self.monsters) - set([i]):
-                        if j.monalive and i.rect.colliderect(j):
-                            if j.mode and i.dx:
-                                j.MonaliveFalse()
+            # Obstacle x Monster
+            self.Obstacles_Monster(i)
+            # Turtle Hitbox check
+            self.TurtleHit(i)
 
     def BonusTraject(self):
         for i in self.bonus:
             i.Traject()
+            for j in self.obstacles:
+                if i.rect.colliderect(j):
+                    i.On_collide(j)
+            if i.rect.colliderect(self.land):
+                i.On_collide(self.land)
+            self.Buff_Player(i)
 
     def AddBonus(self, **kwargs):
         if kwargs.get("coinpos"):
-            a = Coin(kwargs.get("coinpos"))
+            a = Buff(kwargs.get("coinpos"))
             self.bonus.append(a)
 
     def ShowLife(self):
         window.blit(pathimage.PlayerImage(0)[2], (10, 10))
         window.blit(pathimage.Number("x"), (45, 25))
         window.blit(pathimage.Number(self.player.life), (70, 20))
+
+    def TurtleHit(self, i):
+        if isinstance(i, TurtleMons):
+            if not i.mode:
+                for j in set(self.monsters) - set([i]):
+                    if j.monalive and i.rect.colliderect(j):
+                        if j.mode and i.dx:
+                            j.MonaliveFalse()
+
+    def Buff_Player(self, i):
+        if i.rect.colliderect(self.player):
+            i.Picked()
+            self.player.LevelChange(1)
+
+    def Obstacles_Monster(self, i):
+        if i.rect.colliderect(self.land):
+            i.On_collide(self.land)
+        for j in self.obstacles:
+            if i.monalive and i.rect.colliderect(j):
+                i.On_collide(j)
 
 
 Mario(displayw, displayh)
