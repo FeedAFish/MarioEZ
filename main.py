@@ -1,3 +1,4 @@
+from typing_extensions import IntVar
 import pygame
 import pathimage
 from pygame.locals import *
@@ -6,6 +7,7 @@ from ClassPlayer import Player
 from ObstaclesClass import Coinbox, Land, Pipe, Wall
 from MonsterClass import Mush, TurtleFly, TurtleLand, TurtleMons
 import os
+import sys
 
 linkp = os.path.dirname(os.path.abspath(__file__))
 
@@ -48,8 +50,8 @@ class Mario(object):
         self.monsters.append(self.turtlem)
         self.AddObstacle(pipepos=(900, 256))
         self.AddObstacle(pipepos=(1300, 256))
-        self.AddObstacle(wallpos=(380, 206), wallnumber=4)
-        self.AddObstacle(wallpos=(950, 206), wallnumber=4)
+        self.AddObstacle(wallpos=(380, 206))
+        self.AddObstacle(wallpos=(950, 206))
         self.AddObstacle(coinpos=(280, 206))
         self.bonus = []
         self.MainMenu()
@@ -99,10 +101,10 @@ class Mario(object):
             a = Pipe(kwargs.get("pipepos"))
             self.obstacles.append(a)
         if kwargs.get("wallpos"):
-            a = Wall(kwargs.get("wallpos"), kwargs.get("wallnumber"))
+            a = Wall(kwargs.get("wallpos"))
             self.obstacles.append(a)
         if kwargs.get("coinpos"):
-            a = Coinbox(kwargs.get("coinpos"), 1)
+            a = Coinbox(kwargs.get("coinpos"))
             self.obstacles.append(a)
 
     def Main(self):
@@ -182,11 +184,10 @@ class Mario(object):
         for i in self.obstacles:
             if self.player.rect.colliderect(i):
                 self.player.On_Collide(i)
-
                 check_ground = True
-            if isinstance(i, Coinbox):
+            if isinstance(i, Wall):
                 i.BoxJump()
-                if not i.coin and i.toggle:
+                if i.toggle and not i.coin:
                     self.AddBonus(coinpos=i.rect.center)
                     i.ToggleFalse()
         if not check_ground:
@@ -235,7 +236,7 @@ class Mario(object):
                             j.MonaliveFalse()
 
     def Buff_Player(self, i):
-        if i.rect.colliderect(self.player):
+        if i.rect.colliderect(self.player) and not i.picked:
             i.Picked()
             self.player.LevelChange(1)
 

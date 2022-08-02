@@ -115,7 +115,7 @@ class Player(ClassMain.Collidable):
                     self.onair = True
                     self.counter = 0
                     # Collision coin box
-                    if isinstance(sprite, ObstaclesClass.Coinbox):
+                    if isinstance(sprite, ObstaclesClass.Wall):
                         sprite.On_collide(self)
                         if sprite.coin:
                             sprite.Coinleave()

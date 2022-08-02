@@ -24,18 +24,16 @@ class Pipe(Obstacles):
 
 
 class Wall(Obstacles):
-    def __init__(self, pos, number, image=pathimage.wall):
+    def __init__(self, pos, image=pathimage.wall):
         super().__init__(image, pos)
-        self.number = number
-        self.rect.width = self.rect.width * self.number
         self.impactcount = 0
+        self.toggle = 0
+        self.coin = 0
 
     def Show(self, window):
-        for i in range(self.number):
-            window.blit(
-                self.image, (self.rect.left + i *
-                             self.rect.height, self.rect.top)
-            )
+        window.blit(
+            self.image, self.rect
+        )
 
     def On_collide(self, sprite):
         if not self.impactcount:
@@ -44,11 +42,10 @@ class Wall(Obstacles):
     def BoxJump(self):
         if self.impactcount:
             self.impactcount -= 1
-            if self.impactcount < 8:
+            if self.impactcount < 7:
                 self.Move(0, 1)
             else:
                 self.Move(0, -1)
-            print(1)
 
 
 class Land(Obstacles):
@@ -57,23 +54,11 @@ class Land(Obstacles):
 
 
 class Coinbox(Wall):
-    def __init__(self, pos, number, image=pathimage.coinbox):
-        super().__init__(pos, number, image)
+    def __init__(self, pos, image=pathimage.coinbox):
+        super().__init__(pos, image)
         self.impactcount = 0
-        self.coin = 1
         self.toggle = 1
-
-    def On_collide(self, sprite):
-        if not self.impactcount:
-            self.impactcount = 14
-
-    def BoxJump(self):
-        if self.impactcount:
-            self.impactcount -= 1
-            if self.impactcount < 8:
-                self.Move(0, 1)
-            else:
-                self.Move(0, -1)
+        self.coin = 1
 
     def Coinleave(self):
         self.coin = 0
