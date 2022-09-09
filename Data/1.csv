@@ -1,0 +1,4 @@
+,Pipeposx,Pipeposy,Pipeheight,Turtlex,Turtley,TColor,Wallx,Wally,WallNo,Flowerx,Flowery
+0,900,250,120,1000,166,green,400,200,4,915,250
+1,1300,250,120,800,166,red,0,0,0,0,0
+2,1700,250,120,0,0,green,0,0,0,0,0

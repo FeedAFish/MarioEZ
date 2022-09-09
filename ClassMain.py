@@ -8,8 +8,3 @@ class Collidable(pygame.sprite.Sprite):
         # self.collision_groups = []
         self.dx = 0
         self.dy = 0
-
-
-class Spike(Collidable):
-    def __init__(self):
-        super().__init__()

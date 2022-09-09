@@ -1,20 +1,44 @@
-from turtle import Turtle
 import pygame
 from pygame.locals import *
-import pathimage
+import ImageLoader
 import ClassMain
 
 
 class Monsters(ClassMain.Collidable):
     def __init__(self, pos, image, imaged):
         super().__init__()
+
+        # Image Load
         self.imaged = imaged
         self.image = image
+        self.image = pygame.transform.flip(self.image, True, False)
+        # Rect Get
         self.rect = self.image.get_rect(topleft=pos)
+
+        # Speed
+        self.dx = 0
+        self.dy = 0
+        self.speed = 3
+
+        # Variable
         self.monalive = True
-        self.speed = 4
+        self.counter = 0  # Counter for death
+
+        # Traject
         self.trajectcount = 0
-        self.counter = 0
+        self.limittraject = 600
+
+        # Flying Object
+        self.fly = False
+
+        self.test = 0
+
+    # Stats Change Function
+
+    def MonaliveFalse(self):
+        self.monalive = False
+
+    # Action Function
 
     def Show(self, window):
         if self.monalive:
@@ -29,6 +53,8 @@ class Monsters(ClassMain.Collidable):
     def Move(self, a, b):
         self.rect.move_ip(a, b)
 
+    # Collision Function
+
     def On_collide(self, sprite):
         a = pygame.Rect(
             (self.rect[0], self.rect[1] -
@@ -40,103 +66,111 @@ class Monsters(ClassMain.Collidable):
             else:
                 self.rect.right = sprite.rect.left
             self.dx = - self.dx
+            self.image = pygame.transform.flip(
+                self.image, True, False)
         else:
             if self.dy < 0:
                 self.rect.top = sprite.rect.bottom
             else:
                 self.rect.bottom = sprite.rect.top
 
-    def MonaliveFalse(self):
-        self.monalive = False
+    def Pl_Collide(self, sprite):
+        self.SelfKill(sprite)
 
+    def SelfKill(self, sprite):
+        pass
 
-class Mush(Monsters):
-    def __init__(self, pos, image=pathimage.mushm, imaged=pathimage.mushd):
-        super().__init__(pos, image, imaged)
-        self.dx = -1
-        self.dy = 12
+    # Trajectory Function
 
     def Traject(self):
-        if self.trajectcount < 600:
+        if self.trajectcount < self.limittraject:
             self.trajectcount += 1
+            self.TrajectCheck()
+            if self.trajectcount == self.limittraject/2:
+                self.FlipTraject()
             if self.trajectcount % self.speed == 0:
                 self.Move(self.dx, self.dy)
         else:
-            self.trajectcount = 0
-            self.dx = - self.dx
+            self.FlipTraject()
+            self.Move(self.dx, self.dy)
+            self.trajectcount = 1
 
-    def Pl_Collide(self, sprite):
-        self.SelfKill()
+    def TrajectCheck(self):
+        pass
 
-    def SelfKill(self):
+    def FlipTraject(self):
+        self.dx = - self.dx
+        self.image = pygame.transform.flip(self.image, True, False)
+
+
+class Mushroom(Monsters):
+    def __init__(self, pos, image=ImageLoader.mushm, imaged=ImageLoader.mushd):
+        super().__init__(pos, image, imaged)
+        self.dx = -1
+        self.dy = 6
+
+    def SelfKill(self, sprite):
         if not self.counter:
             self.counter = 100
         self.image = self.imaged
         self.rect = self.image.get_rect(bottomleft=self.rect.bottomleft)
 
 
-class TurtleMons(Monsters):
-    def __init__(self, pos, image, imaged):
-        super().__init__(pos, image, imaged)
+class Turtle(Monsters):
+    def __init__(self, pos, color, fly, image=0, imaged=0):
+        super().__init__(pos, image=ImageLoader.Turtle(
+            color, fly), imaged=ImageLoader.TurtleShell(color))
+        # Kill Mode - Turtle
         self.mode = True
 
-    def Pl_Collide(self, sprite):
+        # Flying turtle
+        self.fly = fly
+
+    # Turtle into Shell
+
+    def SelfKill(self, sprite):
         if self.mode:
-            self.image = self.imaged
-            self.rect = self.image.get_rect(bottomleft=self.rect.bottomleft)
-            self.mode = False
-            self.dx = 0
-            self.dy = 3
+            self.Shell()
+            self.fly = False
         else:
-            if not self.dx:
-                if self.rect.left > sprite.rect.left:
-                    self.dx = 4
-                else:
-                    self.dx = -4
+            self.ShellAction(sprite)
+
+    def Shell(self):
+        self.image = self.imaged
+        self.rect = self.image.get_rect(bottomleft=self.rect.bottomleft)
+        self.mode = False
+        self.dx = 0
+        self.dy = 6
+
+    def ShellAction(self, sprite):
+        if not self.dx:
+            if self.rect.left > sprite.rect.left:
+                self.dx = 4
             else:
-                self.dx = 0
+                self.dx = -4
+        else:
+            self.dx = 0
 
     def Traject(self):
         if self.mode:
-            self.RunTraject()
+            super().Traject()
         else:
             self.Move(self.dx, self.dy)
 
-    def RunTraject(self):
-        pass
+
+class TurtleLand(Turtle):
+    def __init__(self, pos, color, fly=False, image=0, imaged=0):
+        super().__init__(pos, color, fly, image, imaged)
+        self.dx = -1
+        self.dy = 6
 
 
-class TurtleLand(TurtleMons):
-    def __init__(self, pos, image=pathimage.landturtlered, imaged=pathimage.turtleshell):
-        super().__init__(pos, image, imaged)
+class TurtleFly(Turtle):
+    def __init__(self, pos, color, fly=True, image=0, imaged=0):
+        super().__init__(pos, color, fly, image, imaged)
         self.dx = -1
         self.dy = 3
 
-    def RunTraject(self):
-        if self.trajectcount < 600:
-            self.trajectcount += 1
-            if self.trajectcount % self.speed == 0:
-                self.Move(self.dx, self.dy)
-        else:
-            self.trajectcount = 0
-            self.dx = - self.dx
-
-
-class TurtleFly(TurtleMons):
-    def __init__(self, pos, image=pathimage.flyturtlered, imaged=pathimage.turtleshell):
-        super().__init__(pos, image, imaged)
-        self.dx = -1
-        self.dy = -3
-
-    def RunTraject(self):
-        if self.trajectcount < 1200:
-            self.trajectcount += 1
-            if self.trajectcount % 100 == 0:
-                self.dy = -self.dy
-            if self.trajectcount == 600:
-                self.dx = -self.dx
-            if self.trajectcount % self.speed == 0:
-                self.Move(self.dx, self.dy)
-        else:
-            self.trajectcount = 0
-            self.dx = - self.dx
+    def TrajectCheck(self):
+        if self.mode and not self.trajectcount % 150:
+            self.dy = - self.dy

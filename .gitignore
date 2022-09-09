@@ -231,3 +231,7 @@ cython_debug/
 # End of https://www.toptal.com/developers/gitignore/api/python,images
 
 PSD/
+./Data/loader.py
+./keep.txt
+./test.*
+Old/

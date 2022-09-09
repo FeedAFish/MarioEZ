@@ -1,11 +1,11 @@
 import pygame
-import ObstaclesClass
 from pygame.locals import *
-from MonsterClass import Monsters
-from ObstaclesClass import Obstacles
-import pathimage
-import ClassMain
 
+import ObstacleClass
+import ImageLoader
+import ClassMain
+import SpikeClass
+import MonsterClass
 
 jumptime = 60
 falltime = 75
@@ -17,25 +17,34 @@ class Player(ClassMain.Collidable):
         pos,
     ):
         super().__init__()
+
+        # Level
         self.level = 1
-        self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
+
+        # Image Load
+        self.imager, self.imagel, self.imagejr, self.imagejl = ImageLoader.PlayerImage(
             self.level)
 
+        # Rectangular Get
         self.rect = self.imager.get_rect(topleft=pos)
 
-        # Variable
+        # Control Variable
         self.onair = True
         self.fall = True
         self.right = True
         self.moveable = True
+
         # Counter Jump On Air
         self.counter = 0
-        # Level
 
+        # Life
         self.life = 2
-        # Invisible
+
+        # Invisible Variable
         self.invisible = False
         self.invisibleTimer = 0
+
+    # Show player
 
     def Show(self, window):
         if self.right:
@@ -48,6 +57,12 @@ class Player(ClassMain.Collidable):
                 window.blit(self.imagejl, self.rect)
             else:
                 window.blit(self.imagel, self.rect)
+
+# Action Function
+
+    # Stats Check Function
+
+    # Jump and Fall
 
     def Up_Pressed(self):
         if not self.onair:
@@ -70,11 +85,31 @@ class Player(ClassMain.Collidable):
                 self.counter = 0
                 self.fall = True
 
+    # Stats Change Fuuntion
+
     def ChangeX(self, change):
         self.dx = change
 
     def ChangePos(self):
         self.right = not self.right
+
+    def To_Ground(self):
+        self.onair = False
+
+    def TO_Air(self):
+        self.onair = True
+
+    def ToggleInvi(self):
+        self.invisible = True
+        self.invisibleTimer = 100
+
+    def LevelChange(self, x):
+        self.level = x
+        self.imager, self.imagel, self.imagejr, self.imagejl = ImageLoader.PlayerImage(
+            self.level)
+        self.rect = self.imagel.get_rect(bottomleft=self.rect.bottomleft)
+
+    # Movement Function
 
     def Move(self):
         if self.rect[0] + self.dx < 0:
@@ -89,20 +124,20 @@ class Player(ClassMain.Collidable):
         else:
             self.invisible = False
 
-    def To_Ground(self):
-        self.onair = False
-
-    def TO_Air(self):
-        self.onair = True
+# Collision Check Function
 
     def On_Collide(self, sprite):
-        if isinstance(sprite, ClassMain.Spike):
+        # Spike = Kill
+        if isinstance(sprite, SpikeClass.Spike):
             self.Die()
         a = pygame.Rect(
             (self.rect[0], self.rect[1] -
              self.dy), (self.rect[2], self.rect[3])
         )
-        if isinstance(sprite, Obstacles):
+
+        # With Normal Obstacles
+        if isinstance(sprite, ObstacleClass.Obstacles):
+            # Collision Position
             if a.colliderect(sprite):
                 if self.dx < 0:
                     self.rect.left = sprite.rect.right
@@ -114,48 +149,47 @@ class Player(ClassMain.Collidable):
                     self.fall = True
                     self.onair = True
                     self.counter = 0
-                    # Collision coin box
-                    if isinstance(sprite, ObstaclesClass.Wall):
+
+                    # Collision coin box + wall
+                    if isinstance(sprite, ObstacleClass.Wall):
                         sprite.On_collide(self)
                         if sprite.coin:
                             sprite.Coinleave()
+
                 else:
                     self.rect.bottom = sprite.rect.top
                     self.fall = True
                     self.onair = False
                     self.counter = 0
-        else:
-            if a.colliderect(sprite) or self.dy < 0:
-                self.Die()
+
+        # Collision with monsters etc
+        elif not isinstance(sprite, SpikeClass.Spike):
+            if a.colliderect(sprite):
+                if not sprite.dx and isinstance(sprite, MonsterClass.Turtle) and not sprite.mode:
+                    sprite.Pl_Collide(self)
+                else:
+                    self.Die()
+            # Jump on touching
             else:
                 self.fall = False
                 self.onair = True
                 self.counter = 0
                 sprite.Pl_Collide(self)
 
-    def ToggleInvi(self):
-        self.invisible = True
-        self.invisibleTimer = 100
+# Dead Function
 
     def Die(self):
         if self.level and not self.invisible:
             self.level -= 1
-            self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
+            self.imager, self.imagel, self.imagejr, self.imagejl = ImageLoader.PlayerImage(
                 self.level)
             self.rect = self.imagel.get_rect(bottomleft=self.rect.bottomleft)
             self.ToggleInvi()
         elif not self.invisible:
             if self.life:
-                print("RIP")
                 self.rect.topleft = (100, 100)
                 self.life -= 1
             else:
                 pygame.quit()
         else:
             pass
-
-    def LevelChange(self, x):
-        self.level = x
-        self.imager, self.imagel, self.imagejr, self.imagejl = pathimage.PlayerImage(
-            self.level)
-        self.rect = self.imagel.get_rect(bottomleft=self.rect.bottomleft)

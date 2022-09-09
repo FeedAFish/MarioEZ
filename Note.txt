@@ -1,12 +1,12 @@
 Client:
-1800x856
+800 x 450
 
 Barrel:
 Barrel color:
-30e438
-81ea81
+00d067
+95c4ac
 Barrel width scale:
-100(84)/150
+39%/78%
 
 Sky:
 05caed
@@ -15,13 +15,15 @@ Grass:
 12b812
 
 Base:
-705
+370
 
 Turtle:
 Skin:e99566
 G:47bc23
 B:8f2f16
-R:bb1717
+Br:bb1717
+R:f15d31
+Boundary R:e29633
 
 Note:
 Jump -> Fall
